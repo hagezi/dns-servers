@@ -19,7 +19,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 - No EDNS Client Subnet, user location is not exposed to upstreams.
 - Drop ANY requests for improving server performance and enhancing privacy.
 - Rate limiting for response and clients.
-- Only encrypted transport: DNS-over-HTTPS (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
+- Only encrypted transport: DNS-over-HTTPS (DoH/DoH3), DNS-over-TLS (DoT) ~~and DNS-over-QUIC (DoQ)~~
 - No conventional DNS over port 53 to protect against DNS-based DDoS, amplification, spoofing, and cache poisoning.
 - Firewall: restricted to ports strictly necessary for operation.
 - OS & DNS software are regularly updated for latest security.
