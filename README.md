@@ -67,8 +67,6 @@ EU and neighboring countries with limited coverage from current server locations
 > Root cause is still under investigation with the Technitium DNS developer; the trigger is currently unknown.​
 > <br><br>
 > **Recommendation:** Use DNS-over-HTTPS/3 (DoH3) instead of DoQ until this issue is fully resolved.
-> <br><br>
-> **Temporary mitigation:** Periodic QUIC probe + automatic QUIC listener rebind via Technitium API when the probe fails.
 
 > [!TIP]
 > For a general idea of the latency between your location and our server locations, we recommend using [WonderNetwork’s Global Ping Statistics](https://wondernetwork.com/pings). 
