@@ -78,6 +78,15 @@ EU and neighboring countries with limited coverage from current server locations
 > To optimize latency when choosing DNS servers, you can personally measure the response times by pinging each DNS server from your own connection. This approach factors in your specific network conditions, such as geographic location, ISP routing, and local congestion, giving you a practical, real-world latency measurement. By selecting the DNS server with the lowest ping time, you maximize responsiveness and reduce DNS query delays for your devices or infrastructure.
 > <br><br>
 > [Latency cheat sheet](latency.pdf) - This PDF summarizes measured network latency in milliseconds from six European PoPs (Amsterdam, Falkenstein, Frankfurt, Helsinki, Nürnberg, Vienna) to cities across European countries, highlighting the fastest location per city and EU membership status based on WonderNetwork ping data.
+> <br><br>
+> | DNS resolve / lookup time (ms) | Rating | What it usually means |
+> |---:|---|---|
+> | < 20 | Excellent | Very fast response, often due to a nearby resolver and/or a warm cache. |
+>| 20–50 | Very good | Common target range for good user experience. |
+>| 50–100 | OK | Usually fine, but can add noticeable delay if a page triggers many lookups. |
+>| 100–120 | Average | Often cited as the upper end of “average” DNS lookup time. |
+>| 120–200 | Slow | Suggests distance, routing/latency, resolver load, or extra resolution steps. |
+>| > 200 | Very slow / problematic | Frequently indicates a real performance or reachability issue (retries/timeouts/overload). |
 
 ### Expected IP addresses
 
