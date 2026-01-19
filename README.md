@@ -79,6 +79,7 @@ EU and neighboring countries with limited coverage from current server locations
 > <br><br>
 > [Latency cheat sheet](latency.pdf) - This PDF summarizes measured network latency in milliseconds from six European PoPs (Amsterdam, Falkenstein, Frankfurt, Helsinki, Nürnberg, Vienna) to cities across European countries, highlighting the fastest location per city and EU membership status based on WonderNetwork ping data.
 > <br><br>
+> **DNS resolution reference values (ms):**
 > | DNS resolve / lookup time (ms) | Rating | What it usually means |
 > |---:|---|---|
 > | < 20 | Excellent | Very fast response, often due to a nearby resolver and/or a warm cache. |
