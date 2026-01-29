@@ -1,1 +1,0 @@
-HaGeZi DNS configuration files

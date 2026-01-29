@@ -5,7 +5,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 ## Features
 
 - EU-only hosting (Hetzner: Falkenstein, Nuremberg, Helsinki) and jurisdiction, with full GDPR and ENISA recommendations.
-- Entirely open-source stack: [Technitium DNS](https://github.com/TechnitiumSoftware/DnsServer) with [Unbound](https://github.com/NLnetLabs/unbound) as upstream and a local root zone copy on Debian Linux.
+- Entirely open-source stack: [Technitium DNS](https://github.com/TechnitiumSoftware/DnsServer) on Debian Linux.
 - Blocking level: Balanced (Ads, Tracking, Analytics, Metrics, Telemetry, Phishing, Malware, Spam, Scam, Fake, Cryptojacking)
 - Blocklists: [HaGeZi Multi Pro](https://github.com/hagezi/dns-blocklists#pro) & [HaGeZi Threat Intelligence Feeds](https://github.com/hagezi/dns-blocklists#tif)
 - No additional censorship, only security and privacy-oriented filtering.
@@ -29,7 +29,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 ## Logging and Data Handling
 
 - Hourly DNS statistics (processed and block domain rankings, per-client query counts) stored only in RAM, never written to disk and auto-deleted each hour or on service/server restart.<br>(Query counts per client are solely for rate limiting, no linkage to resolved/blocked domains or other details)
-- Error logging: Only domains failing to resolve (due to DNSSEC, server, timeout, etc. - resulting in SERVFAIL) are logged for up to 7 days for troubleshooting. No client IP addresses are included.
+- Error logging: Only domains that fail to resolve (e.g., DNSSEC validation failure, upstream/server error, timeout - resulting in SERVFAIL) are logged, and those entries are retained for 24 hours for troubleshooting; no client IP addresses are stored.
 - Uses an in-memory DNS cache for enhanced privacy. No query data is ever written to disk, and all entries are automatically cleared when they expire or the server restarts.
   
 ## Filtering
