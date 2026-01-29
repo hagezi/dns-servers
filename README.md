@@ -91,7 +91,7 @@ EU and neighboring countries with limited coverage from current server locations
 
 ### Expected IP addresses
 
-- `88.99.13.180` - `2a01:4f8:c17:1c66::1` (ptr:  `root.hagezi.org`) - Hetzner Online GmbH - Falkenstein, Saxony, DE
+- `188.34.161.210` - `2a01:4f8:c17:1c66::1` (ptr:  `root.hagezi.org`) - Hetzner Online GmbH - Falkenstein, Saxony, DE
 - `159.69.155.94` - `2a01:4f8:1c1c:d363::1` (ptr:  `wurzn.hagezi.org`) - Hetzner Online GmbH - Nürnberg, Bavaria, DE
 - `95.217.163.17` - `2a01:4f9:c013:dc4e::1` (ptr:  `juuri.hagezi.org`) - Hetzner Online GmbH/HOS-GUN - Helsinki, Uusimaa, FI
 
