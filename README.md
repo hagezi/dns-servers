@@ -51,22 +51,32 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
 | Germany, Falkenstein| DoH/DoH3      | `https://root.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/root-hagezi-org.mobileconfig) [QR](/mobileconfig/root-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK | 
-|                    | DoT/~~QUIC~~      | `root.hagezi.org`                     |                       |                         |
+|                    | DoT/QUIC      | `root.hagezi.org`                     |                       |                         |
 | Germany, Nuremberg| DoH/DoH3      | `https://wurzn.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/wurzn-hagezi-org.mobileconfig) [QR](/mobileconfig/wurzn-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA | 
-|                    | DoT/~~QUIC~~      | `wurzn.hagezi.org`                     |                       |                         |
+|                    | DoT/QUIC      | `wurzn.hagezi.org`                     |                       |                         |
 | Finland, Helsinki   | DoH/DoH3      | `https://juuri.hagezi.org/dns-query`  | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/juuri-hagezi-org.mobileconfig) [QR](/mobileconfig/juuri-hagezi-org.mobileconfig.png)    | DK, EE, FI, LT, LV, NO, SE | 
-|                    | DoT/~~QUIC~~      | `juuri.hagezi.org`                    |                       |                         |
+|                    | DoT/QUIC      | `juuri.hagezi.org`                    |                       |                         |
 
 EU and neighboring countries with limited coverage from current server locations: AD, CY, GE, IS, LI, MC, ME, PT, SM, TR
 
-> [!WARNING]
-> **Known issue:** QUIC (DoQ) instability
-> <br><br>
-> Every few days, the DNS-over-QUIC (DoQ) listener may become unresponsive and stop accepting new QUIC connections; when this occurs, DoQ clients cannot connect until the QUIC/DoQ service (port binding) is restarted on the server.​
-> <br><br>
-> Root cause is still under investigation with the Technitium DNS developer; the trigger is currently unknown.​
-> <br><br>
-> **Recommendation:** Use DNS-over-HTTPS/3 (DoH3) instead of DoQ until this issue is fully resolved.
+### DNS Stamps
+
+> [!NOTE]
+> These encrypted DNS Stamps let compatible tools connect to HaGeZi DNS automatically, with all the needed details built in.
+
+| Endpoint | Protocol : DNS Stamp |
+| -------- | ----- | 
+| root.hagezi.org  | DoH: `sdns://AgMAAAAAAAAADjE4OC4zNC4xNjEuMjEwAA9yb290LmhhZ2V6aS5vcmcKL2Rucy1xdWVyeQ` |
+|                  | DoT: `sdns://AwMAAAAAAAAADjE4OC4zNC4xNjEuMjEwAA9yb290LmhhZ2V6aS5vcmc` |
+|                  | DoQ: `sdns://BAMAAAAAAAAADjE4OC4zNC4xNjEuMjEwAA9yb290LmhhZ2V6aS5vcmc` |
+| wurzn.hagezi.org | DoH: `sdns://AgMAAAAAAAAADTE1OS42OS4xNTUuOTQAEHd1cnpuLmhhZ2V6aS5vcmcKL2Rucy1xdWVyeQ` |
+|                  | DoT: `sdns://AwMAAAAAAAAADTE1OS42OS4xNTUuOTQAEHd1cnpuLmhhZ2V6aS5vcmc` |
+|                  | DoQ: `sdns://BAMAAAAAAAAADTE1OS42OS4xNTUuOTQAEHd1cnpuLmhhZ2V6aS5vcmc` |
+| juuri.hagezi.org | DoH: `sdns://AgMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmcKL2Rucy1xdWVyeQ` |
+|                  | DoT: `sdns://AwMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmc` |
+|                  | DoQ: `sdns://BAMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmc` |
+
+### Latency
 
 > [!TIP]
 > For a general idea of the latency between your location and our server locations, we recommend using [WonderNetwork’s Global Ping Statistics](https://wondernetwork.com/pings). 
