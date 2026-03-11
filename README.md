@@ -99,7 +99,7 @@ EU and neighboring countries with limited coverage from current server locations
 >| 120–200 | Slow | Suggests distance, routing/latency, resolver load, or extra resolution steps. |
 >| > 200 | Very slow / problematic | Frequently indicates a real performance or reachability issue (retries/timeouts/overload). |
 
-### Expected IP addresses
+### Expected IP addresses / conventional DNS over port 53
 
 - `188.34.161.210` - `2a01:4f8:c17:1c66::1` (ptr:  `root.hagezi.org`) - Hetzner Online GmbH - Falkenstein, Saxony, DE
 - `159.69.155.94` - `2a01:4f8:1c1c:d363::1` (ptr:  `wurzn.hagezi.org`) - Hetzner Online GmbH - Nürnberg, Bavaria, DE
