@@ -19,8 +19,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 - No EDNS Client Subnet, user location is not exposed to upstreams.
 - Drop ANY requests for improving server performance and enhancing privacy.
 - Rate limiting for response and clients.
-- Encrypted transport: DNS-over-HTTPS (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
-- ~~No conventional DNS over port 53 to protect against DNS-based DDoS, amplification, spoofing, and cache poisoning.~~ (temporarily enabled, see https://github.com/hagezi/dns-servers/issues/22)
+- Encrypted transport: DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
 - Firewall: restricted to ports strictly necessary for operation.
 - OS & DNS software are regularly updated for latest security.
 - No logging or storage of individual queries per client.
@@ -52,10 +51,13 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
 | Germany, Falkenstein| DoH/DoH3      | `https://root.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/root-hagezi-org.mobileconfig) [QR](/mobileconfig/root-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK | 
 |                    | DoT/QUIC      | `root.hagezi.org`                     |                       |                         |
+|                    | Do53      | `188.34.161.210`<br>`2a01:4f8:c17:1c66::1` |                       |                         |
 | Germany, Nuremberg| DoH/DoH3      | `https://wurzn.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/wurzn-hagezi-org.mobileconfig) [QR](/mobileconfig/wurzn-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA | 
 |                    | DoT/QUIC      | `wurzn.hagezi.org`                     |                       |                         |
+|                    | Do53      | `159.69.155.94`<br>`2a01:4f8:1c1c:d363::1` |                       |                         |
 | Finland, Helsinki   | DoH/DoH3      | `https://juuri.hagezi.org/dns-query`  | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/juuri-hagezi-org.mobileconfig) [QR](/mobileconfig/juuri-hagezi-org.mobileconfig.png)    | DK, EE, FI, LT, LV, NO, SE | 
 |                    | DoT/QUIC      | `juuri.hagezi.org`                    |                       |                         |
+|                    | Do53      | `95.217.163.17`<br>`2a01:4f9:c013:dc4e::1` |                       |                         |
 
 EU and neighboring countries with limited coverage from current server locations: AD, CY, GE, IS, LI, MC, ME, PT, SM, TR
 
@@ -99,14 +101,11 @@ EU and neighboring countries with limited coverage from current server locations
 >| 120–200 | Slow | Suggests distance, routing/latency, resolver load, or extra resolution steps. |
 >| > 200 | Very slow / problematic | Frequently indicates a real performance or reachability issue (retries/timeouts/overload). |
 
-### Expected IP addresses / conventional DNS over port 53
+### Expected IP addresses
 
 - `188.34.161.210` - `2a01:4f8:c17:1c66::1` (ptr:  `root.hagezi.org`) - Hetzner Online GmbH - Falkenstein, Saxony, DE
 - `159.69.155.94` - `2a01:4f8:1c1c:d363::1` (ptr:  `wurzn.hagezi.org`) - Hetzner Online GmbH - Nürnberg, Bavaria, DE
 - `95.217.163.17` - `2a01:4f9:c013:dc4e::1` (ptr:  `juuri.hagezi.org`) - Hetzner Online GmbH/HOS-GUN - Helsinki, Uusimaa, FI
-
-> [!NOTE]
-> By default, DNS servers internally prefer IPv4 when querying root servers. This forces upstream root queries to use IPv4 transport, which can cause diagnostic tools such as dnscheck.tools or browserleaks.com to show only IPv4 paths. However, client queries for both IPv4 (A) and IPv6 (AAAA) records remain unaffected due to full recursion.
 
 If you see any IP addresses in your [DNS leak test](https://dnscheck.tools) results other than those expected, it indicates that your device or network might be leaking DNS queries through fallback resolvers or directly to your ISP. This means DNS requests are bypassing your intended DNS protection, potentially exposing your browsing activity to external parties. 
 
