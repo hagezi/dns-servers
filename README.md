@@ -6,30 +6,45 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 
 - EU-only hosting (Hetzner: Falkenstein, Nuremberg, Helsinki) and jurisdiction, with full GDPR and ENISA recommendations.
 - Entirely open-source stack: [Technitium DNS](https://github.com/TechnitiumSoftware/DnsServer) on Debian Linux.
-- No additional censorship, only security and privacy-oriented filtering.
 
-## Blocklists
-| List                             | Description                                                                                                                                                         | Type     | Link                                                                                                                                                                                                                                                       |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HaGeZi Multi Pro                 | Blocks Ads, Affiliate, Tracking, Metrics, Telemetry, Phishing, Malware, Scam, Fake, Cryptojacking and other "Crap".                                                 | Balanced | [Link](https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt) [M1](https://gitlab.com/hagezi/mirror/-/raw/main/dns-blocklists/adblock/pro.txt) [M2](https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/adblock/pro.txt) |
-| HaGeZi Threat Intelligence Feeds | Blocks Malware, Cryptojacking, Scam, Spam, and Phishing. It targets domains known to spread malware, launch phishing attacks, and host command-and-control servers. | Full     | [Link](https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/tif.txt) [M1](https://gitlab.com/hagezi/mirror/-/raw/main/dns-blocklists/adblock/tif.txt) [M2](https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/adblock/tif.txt) |
-- The AdBlock format is used for the list; links are fetched hourly.
-- Furthermore: [hagezi/dns-blocklists](https://github.com/hagezi/dns-blocklists)
-
-## Security & Privacy
+### Security & Privacy
 
 - No recursion via third-party resolvers.
 - Strict DNSSEC validation to prevent tampering.
 - QNAME minimization is enforced for better privacy.
-- DNS leak/rebind protection.
+- DNS leak/rebind protection
 - No EDNS Client Subnet, user location is not exposed to upstreams.
 - Drop ANY requests for improving server performance and enhancing privacy.
-- Rate limiting for response and clients.
+- Strict rate limiting for response and clients.
 - Encrypted transport: DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
+- Unencrypted transport: DNS-over-53 (Do53)
+- EDE (Extended DNS Errors) support, makes DNS errors more descriptive.
 - Firewall: restricted to ports strictly necessary for operation.
 - OS & DNS software are regularly updated for latest security.
 - No logging or storage of individual queries per client.
 - No sharing of any data with third parties. If you don't log anything sharable, you can't share anything.
+  
+### Filtering/Blocking
+
+HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and security while minimizing unnecessary restrictions. This approach provides effective protection without excessive blocking, making it ideal for most users. The balance is achieved through the use of the following blocklists:
+
+| Blocklist | Link | Blocks |
+|------|------|-------------|
+| HaGeZi Multi Pro | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/pro.txt) | Ads, Tracking, ANalytics, Metrics, Telemetry |
+| HaGeZi Threat Intelligence Feeds | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/tif.txt) | Phishing, Malware, Scam, Fake, Cryptojacking |
+
+No additional censorship, only security and privacy-oriented filtering.
+
+#### Block TTL (Time to Live) and Response
+
+- **Block TTL: 3600**<br>Setting DNS block TTL to 3600 seconds (1 hour) reduces the frequency of repeated DNS requests for blocked domains. This lowers CPU and network activity on mobile devices, helping save battery life. The 3600 TTL balances caching efficiency and responsiveness, improving battery performance without sacrificing block update speed.
+- **Block response: 0.0.0.0**<br>Blocked domains are answered with `0.0.0.0` instead of `REFUSED/NXDOMAIN` or `127.0.0.1`. This makes connections fail immediately without local timeouts or retries in many apps, reducing unnecessary traffic.
+
+#### Special domain handling:
+
+- **Blocked Mozilla Firefox canary domain**, answered with `NXDOMAIN` - prevents Mozilla Firefox from automatically switching to DNS-over-HTTPS in its settings.
+- **Blocked Google Chrome preflight mode for prefetching**, answered with `NXDOMAIN` - applies DNS filtering to resources preloaded via Chrome’s private prefetch proxy.
+- **Allowed access to Apple iCloud Private Relay** - supports macOS and iOS Mail Privacy Protection and Safari Tracking Prevention.
 
 ## Logging and Data Handling
 
@@ -37,19 +52,9 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 - Error logging: Only domains that fail to resolve (e.g., DNSSEC validation failure, upstream/server error, timeout - resulting in SERVFAIL) are logged, and those entries are retained for 24 hours for troubleshooting; no client IP addresses are stored.
 - Uses an in-memory DNS cache for enhanced privacy. No query data is ever written to disk, and all entries are automatically cleared when they expire or the server restarts.
   
-## Filtering
+### Hourly statistics
 
-HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and security while minimizing unnecessary restrictions. This approach provides effective protection without excessive blocking, making it ideal for most users. The balance is achieved through the use of HaGeZi Multi Pro and HaGeZi Threat Intelligence Feed blocklists.
-
-- **Block TTL: 3600**<br>Setting DNS block TTL to 3600 seconds (1 hour) reduces the frequency of repeated DNS requests for blocked domains. This lowers CPU and network activity on mobile devices, helping save battery life. The 3600 TTL balances caching efficiency and responsiveness, improving battery performance without sacrificing block update speed.
-
-- **Block response: 0.0.0.0**<br>Blocked domains are answered with `0.0.0.0` instead of `REFUSED/NXDOMAIN` or `127.0.0.1`. This makes connections fail immediately without local timeouts or retries in many apps, reducing unnecessary traffic.
-
-### Special domain handling:
-
-- **Blocked Mozilla Firefox canary domain**, answered with `NXDOMAIN` - prevents Mozilla Firefox from automatically switching to DNS-over-HTTPS in its settings.
-- **Blocked Google Chrome preflight mode for prefetching**, answered with `NXDOMAIN` - applies DNS filtering to resources preloaded via Chrome’s private prefetch proxy.
-- **Allowed access to Apple iCloud Private Relay** - supports macOS and iOS Mail Privacy Protection and Safari Tracking Prevention.
+A simplified version of the hourly statistics (number of queries, number of blocked queries, and number of clients) can be viewed via the following links: [root.hagezi.org](https://root.hagezi.org/stats.txt) | [wurzn.hagezi.org](https://wurzn.hagezi.org/stats.txt) | [root.hagezi.org](https://juuri.hagezi.org/stats.txt)
 
 ## Server Locations & Access
 
