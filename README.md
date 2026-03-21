@@ -6,16 +6,23 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 
 - EU-only hosting (Hetzner: Falkenstein, Nuremberg, Helsinki) and jurisdiction, with full GDPR and ENISA recommendations.
 - Entirely open-source stack: [Technitium DNS](https://github.com/TechnitiumSoftware/DnsServer) on Debian Linux.
-- Blocking level: Balanced (Ads, Tracking, Analytics, Metrics, Telemetry, Phishing, Malware, Spam, Scam, Fake, Cryptojacking)
-- Blocklists: [HaGeZi Multi Pro](https://github.com/hagezi/dns-blocklists#pro) & [HaGeZi Threat Intelligence Feeds](https://github.com/hagezi/dns-blocklists#tif)
 - No additional censorship, only security and privacy-oriented filtering.
+
+## Blocklists
+
+| List                             | Description                                                                                                                                                         | Type     | Link                                                                                                                                                                                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HaGeZi  Multi Pro                | Blocks Ads, Affiliate, Tracking, Metrics, Telemetry, Phishing, Malware, Scam, Fake, Cryptojacking and other "Crap".                                                 | Balanced | [Link](https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt) [M1](https://gitlab.com/hagezi/mirror/-/raw/main/dns-blocklists/adblock/pro.txt) [M2](https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/adblock/pro.txt) |
+| HaGeZi Threat Intelligence Feeds | Blocks Malware, Cryptojacking, Scam, Spam, and Phishing. It targets domains known to spread malware, launch phishing attacks, and host command-and-control servers. | Full     | [Link](https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/tif.txt) [M1](https://gitlab.com/hagezi/mirror/-/raw/main/dns-blocklists/adblock/tif.txt) [M2](https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/adblock/tif.txt) |
+- The AdBlock format is used for the list; links are fetched hourly.
+- Furthermore: [hagezi/dns-blocklists](https://github.com/hagezi/dns-blocklists)
 
 ## Security & Privacy
 
 - No recursion via third-party resolvers.
 - Strict DNSSEC validation to prevent tampering.
 - QNAME minimization is enforced for better privacy.
-- DNS leak/rebind protection
+- DNS leak/rebind protection.
 - No EDNS Client Subnet, user location is not exposed to upstreams.
 - Drop ANY requests for improving server performance and enhancing privacy.
 - Rate limiting for response and clients.
