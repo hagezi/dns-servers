@@ -30,7 +30,7 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 
 | Blocklist | Link | Blocks |
 |------|------|-------------|
-| HaGeZi Multi Pro | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/pro.txt) | Ads, Tracking, ANalytics, Metrics, Telemetry |
+| HaGeZi Multi Pro | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/pro.txt) | Ads, Tracking, Analytics, Metrics, Telemetry |
 | HaGeZi Threat Intelligence Feeds | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/tif.txt) | Phishing, Malware, Scam, Fake, Cryptojacking |
 
 No additional censorship, only security and privacy-oriented filtering.
