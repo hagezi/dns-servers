@@ -135,30 +135,52 @@ If you see any IP addresses in your [DNS leak test](https://dnscheck.tools) resu
 
 ## Disclaimer / Privacy Policy (EU Compliance)
 
-HaGeZi DNS is a non-commercial, publicly accessible DNS resolver service operated privately for the public benefit in the EU.
+HaGeZi DNS is a non-commercial, publicly accessible DNS resolver service operated privately
+for the public benefit in the EU.
 
-- All servers are operated from data centers in the EU and fall under EU data protection laws, including the EU General Data Protection Regulation (GDPR). User DNS traffic never leaves EU jurisdiction, and only encrypted protocols are offered to maximize privacy.
-- No personal data (such as user names, IP resolution logs, or query specifics linked to individuals) is collected, persisted, or shared with any third party. For operational integrity, temporary and anonymized query statistics are maintained for a maximum of one hour exclusively in memory, not on permanent storage. IP addresses are only ever processed for technical purposes such as query rate limiting and abuse prevention, on the legal basis of Article 6(1)(f) GDPR (legitimate interest), and are not linkable to resolution data.
-- No data is transferred to or processed in countries outside the European Economic Area (EEA). All data remains exclusively within EU-hosted infrastructure.
-- Error logs contain only metadata about DNS failures (domain, timestamp, error type, no client data).
-- No client data is ever sold or shared. All technical and policy guidelines align with the best practices of leading EU projects.
-- Service and server security are proactively maintained; software is kept up-to-date.
-- This is a best-effort, volunteer-provided service with no warranty, availability, or liability for interruptions or malfunctions. It is intended for private, lawful use only. Misuse, automated abuse, or attempts to circumvent restrictions may result in access being blocked.
-- The operator does not guarantee the accuracy or completeness of the blocklists used. False positives (legitimate domains being blocked) may occur. The operator accepts no liability for any issues resulting from incorrect blocking decisions.
-- This service is not directed at children under the age of 16. No data of minors is knowingly collected or processed.
-- This service is not affiliated with any commercial provider, government body, or the DNS4EU consortium.
+- All servers are operated from data centers in the EU and fall under EU data protection laws,
+  including the EU General Data Protection Regulation (GDPR). User DNS traffic remains within EU
+  jurisdiction. Encrypted protocols are supported and recommended wherever possible to maximize
+  privacy.
+- No personal data is retained, persisted, or shared beyond what is technically necessary to
+  operate the service. For operational integrity, temporary and anonymized query statistics are
+  maintained for a maximum of one hour exclusively in memory, not on permanent storage. IP
+  addresses are only ever processed for technical purposes such as query rate limiting and abuse
+  prevention, on the legal basis of Article 6(1)(f) GDPR (legitimate interest), and are not
+  stored in conjunction with or linked to any resolved or blocked domain data.
+- No data is transferred to or processed in countries outside the European Economic Area (EEA).
+  All data remains exclusively within EU-hosted infrastructure.
+- This service is not directed at children under the age of 16. No data of minors is knowingly
+  collected or processed.
+- Error logs contain only metadata about DNS failures (domain, timestamp, error type); no client
+  IP addresses are stored in those logs.
+- No client data is ever sold or shared.
+- This is a best-effort, volunteer-provided service with no warranty, availability, or liability
+  for interruptions or malfunctions. It is intended for private, lawful use only. Misuse,
+  automated abuse, or attempts to circumvent restrictions may result in access being blocked.
+- The operator does not guarantee the accuracy or completeness of the blocklists used. False
+  positives (legitimate domains being blocked) may occur. The operator accepts no liability for
+  any issues resulting from incorrect blocking decisions.
+- This service is not affiliated with any commercial provider, government body, or the DNS4EU
+  consortium.
 - Use of the service constitutes acceptance of these terms.
 
-#### Data Subject Rights (Art. 15–22 GDPR)
+### Data Subject Rights (Art. 15–22 GDPR)
 
-As virtually no personal data is retained by this service, data subject rights under Articles 15–22 GDPR (right of access, erasure, restriction, objection, and portability) are fulfilled by default through the technical design of the service. 
-             
-For privacy matters or any inquiries regarding data processing, contact [privacy@hagezi.org](mailto:privacy@hagezi.org).
+As virtually no personal data is retained by this service, the practical scope of data subject
+rights under Articles 15–22 GDPR (including access, erasure, restriction, objection, and
+portability) is limited by the privacy-preserving technical design of the service. For any privacy
+inquiries or requests regarding data processing, contact
+[privacy@hagezi.org](mailto:privacy@hagezi.org).
 
-### Service operator
+### Service Operator
 
-HaGeZi [mail@hagezi.org](mailto:mail@hagezi.org) - maintained by a private individual in accordance with Article 4 and 13/14 GDPR for non-commercial volunteer projects within the EU.
+HaGeZi [mail@hagezi.org](mailto:mail@hagezi.org) – private individual operating this
+non-commercial volunteer service within the EU. Where applicable, information duties are provided
+in accordance with Articles 13 and 14 GDPR.
 
 *Last updated: 2026-03-22*
+
+
 
 ---
