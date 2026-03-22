@@ -17,7 +17,6 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 - Drop ANY requests for improving server performance and enhancing privacy.
 - Strict rate limiting for response and clients.
 - Encrypted transport: DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
-- Unencrypted transport: DNS-over-53 (Do53)
 - EDE (Extended DNS Errors) support, makes DNS errors more descriptive.
 - Firewall: restricted to ports strictly necessary for operation.
 - OS & DNS software are regularly updated for latest security.
@@ -57,6 +56,8 @@ No additional censorship, only security and privacy-oriented filtering.
 A simplified version of the hourly statistics (number of queries, number of blocked queries, and number of clients) can be viewed via the following links: [root.hagezi.org](https://root.hagezi.org/stats.txt) | [wurzn.hagezi.org](https://wurzn.hagezi.org/stats.txt) | [root.hagezi.org](https://juuri.hagezi.org/stats.txt)
 
 ## Server Locations & Access
+
+The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT), and DNS-over-QUIC (DoQ), as well as unencrypted DNS-over-53 (Do53). Whenever possible, I recommend using DoH or DoH3.
 
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
