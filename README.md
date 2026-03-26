@@ -59,6 +59,9 @@ A simplified version of the hourly statistics (number of queries, number of bloc
 
 The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT), and DNS-over-QUIC (DoQ), as well as unencrypted DNS-over-53 (Do53). Whenever possible, I recommend using DoH or DoH3.
 
+> [!WARNING]
+> Clients that use multiple encrypted DNS protocols at the same time, such as DoH, DoT, and DoQ, may resolve the same domain in parallel multiple times, potentially exhausting the rate limit. There is no practical reason to enable all encrypted protocols simultaneously; doing so only wastes resources.
+
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
 | Germany, Falkenstein| DoH/DoH3      | `https://root.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/root-hagezi-org.mobileconfig) [QR](/mobileconfig/root-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK | 
