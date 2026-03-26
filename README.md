@@ -60,7 +60,7 @@ A simplified version of the hourly statistics (number of queries, number of bloc
 The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT), and DNS-over-QUIC (DoQ), as well as unencrypted DNS-over-53 (Do53). Whenever possible, I recommend using DoH or DoH3.
 
 > [!WARNING]
-> Clients that use multiple encrypted DNS protocols at the same time, such as DoH, DoT, and DoQ, may resolve the same domain in parallel multiple times, potentially exhausting the rate limit. There is no practical reason to enable all encrypted protocols simultaneously; doing so only wastes resources.
+> Clients that use multiple encrypted DNS protocols at the same time, such as DoH, DoT, and DoQ, against the same DNS server may resolve the same domain in parallel multiple times, which can unnecessarily exhaust rate limits. There is no practical benefit to using all encrypted protocols simultaneously; it only wastes resources.
 
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
