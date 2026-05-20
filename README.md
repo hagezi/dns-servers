@@ -5,7 +5,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 ## Features
 
 - EU-only hosting (Hetzner: Falkenstein, Nuremberg, Helsinki) and jurisdiction, with full GDPR and ENISA recommendations.
-- Fully open-source DNS infrastructure combining Technitium DNS Server with Unbound DNS as an upstream recursive resolver, featuring a local root zone for enhanced privacy, security, and performance.
+- Fully open-source DNS infrastructure combining Technitium DNS v15.2 Server with Unbound DNS v1.25.1 as an upstream recursive resolver, featuring a local root zone for enhanced privacy, security, and performance.
 
 ### Security & Privacy
 
