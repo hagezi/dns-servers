@@ -17,7 +17,6 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
 - Drop ANY requests for improving server performance and enhancing privacy.
 - Strict rate limiting for response and clients.
 - Encrypted transport: DNS-over-HTTPS/3 (DoH/DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ)
-- Encrypted Client Hello (ECH) support to improve privacy by hiding the requested hostname during connection setup.
 - EDE (Extended DNS Errors) support, makes DNS errors more descriptive.
 - Firewall: restricted to ports strictly necessary for operation.
 - OS & DNS software are regularly updated for latest security.
