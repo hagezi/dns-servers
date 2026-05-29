@@ -125,6 +125,7 @@ EU and neighboring countries with limited coverage from current server locations
 - `188.34.161.210` - `2a01:4f8:c17:1c66::1` (ptr:  `root.hagezi.org`) - Hetzner Online GmbH - Falkenstein, Saxony, DE
 - `159.69.155.94` - `2a01:4f8:1c1c:d363::1` (ptr:  `wurzn.hagezi.org`) - Hetzner Online GmbH - Nürnberg, Bavaria, DE
 - `95.217.163.17` - `2a01:4f9:c013:dc4e::1` (ptr:  `juuri.hagezi.org`) - Hetzner Online GmbH/HOS-GUN - Helsinki, Uusimaa, FI
+- `162.55.58.40` - `2a01:4f8:1c19:6c19::1` (ptr:  `ctif.hagezi.org`) - Hetzner Online GmbH - Nürnberg, Bavaria, DE
 
 If you see any IP addresses in your [DNS leak test](https://dnscheck.tools) results other than those expected, it indicates that your device or network might be leaking DNS queries through fallback resolvers or directly to your ISP. This means DNS requests are bypassing your intended DNS protection, potentially exposing your browsing activity to external parties. 
 
