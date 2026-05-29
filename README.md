@@ -87,7 +87,7 @@ The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS
 
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
-| Germany, Nuremberg| DoH/DoH3      | `https://ctif.hagezi.org/dns-query`  |  | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA | 
+| Germany, Nuremberg| DoH/DoH3      | `https://ctif.hagezi.org/dns-query`  | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/ctif-hagezi-org.mobileconfig) [QR](/mobileconfig/ctif-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA | 
 |                    | DoT/QUIC      | `ctif.hagezi.org`                     |                       |                         |
 |                    | Do53      | `162.55.58.40`<br>`2a01:4f8:1c19:6c19::1` |                       |                         |
                       
