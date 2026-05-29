@@ -34,9 +34,12 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 |------|------|-------------|
 | HaGeZi Multi Pro | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/pro.txt) | Ads, Tracking, Analytics, Metrics, Telemetry |
 | HaGeZi TIF (Threat Intelligence Feeds) | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/tif.txt) | Phishing, Malware, Scam, Fake, Cryptojacking |
-| xRuffKez CTI (Cyber Threat Intelligence) | [Link](https://codeberg.org/xRuffKez/tif/raw/branch/main/domains.txt) | Phishing, Malware, other dangerous domains (live-updated) |
+| xRuffKez CTI (Cyber Threat Intelligence) | [Link](https://codeberg.org/xRuffKez/tif/raw/branch/main/domains.txt) | Phishing, Malware, other dangerous harmful (live-updated) |
 
 No additional censorship, only security and privacy-oriented filtering.
+
+> [!NOTE]
+> Alternatively, a DNS server is available that blocks only Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains.
 
 #### Block TTL (Time to Live) and Response
 
@@ -66,6 +69,8 @@ The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS
 > [!WARNING]
 > Clients that use multiple encrypted DNS protocols at the same time, such as DoH, DoT, and DoQ, against the same DNS server may resolve the same domain in parallel multiple times, which can unnecessarily exhaust rate limits. There is no practical benefit to using all encrypted protocols simultaneously; it only wastes resources.
 
+#### Blocks Ads, Tracking, Analytics, Metrics, Telemetry, Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains:
+                  
 | Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
 |--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
 | Germany, Falkenstein| DoH/DoH3      | `https://root.hagezi.org/dns-query`   | [Link](https://raw.githubusercontent.com/hagezi/dns-servers/refs/heads/main/mobileconfig/root-hagezi-org.mobileconfig) [QR](/mobileconfig/root-hagezi-org.mobileconfig.png)    | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK | 
@@ -78,6 +83,14 @@ The servers are accessible via encrypted DNS protocols, including DNS-over-HTTPS
 |                    | DoT/QUIC      | `juuri.hagezi.org`                    |                       |                         |
 |                    | Do53      | `95.217.163.17`<br>`2a01:4f9:c013:dc4e::1` |                       |                         |
 
+#### Blocks ONLY Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains:
+
+| Location           | Protocols     | Endpoint/URL                          | Apple<br>Config        | Recommended for    |
+|--------------------|---------------|-------------------------------------|-----------------------|-------------------------|
+| Germany, Nuremberg| DoH/DoH3      | `https://ctif.hagezi.org/dns-query`  |  | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA | 
+|                    | DoT/QUIC      | `ctif.hagezi.org`                     |                       |                         |
+|                    | Do53      | `162.55.58.40`<br>`2a01:4f8:1c19:6c19::1` |                       |                         |
+                      
 EU and neighboring countries with limited coverage from current server locations: AD, CY, GE, IS, LI, MC, ME, PT, SM, TR
 
 ### DNS Stamps
@@ -85,6 +98,8 @@ EU and neighboring countries with limited coverage from current server locations
 > [!NOTE]
 > These encrypted DNS Stamps let compatible tools connect to HaGeZi DNS automatically, with all the needed details built in.
 
+#### Blocks Ads, Tracking, Analytics, Metrics, Telemetry, Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains:
+                  
 | Endpoint | Protocol : DNS Stamp |
 | -------- | ----- | 
 | root.hagezi.org  | DoH: `sdns://AgMAAAAAAAAADjE4OC4zNC4xNjEuMjEwAA9yb290LmhhZ2V6aS5vcmcKL2Rucy1xdWVyeQ` |
@@ -96,6 +111,14 @@ EU and neighboring countries with limited coverage from current server locations
 | juuri.hagezi.org | DoH: `sdns://AgMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmcKL2Rucy1xdWVyeQ` |
 |                  | DoT: `sdns://AwMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmc` |
 |                  | DoQ: `sdns://BAMAAAAAAAAADTk1LjIxNy4xNjMuMTcAEGp1dXJpLmhhZ2V6aS5vcmc` |
+
+#### Blocks ONLY Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains:
+                      
+| Endpoint | Protocol : DNS Stamp |
+| -------- | ----- | 
+| ctif.hagezi.org  | DoH: `sdns://AgMAAAAAAAAADDE2Mi41NS41OC40MAAPY3RpZi5oYWdlemkub3JnCi9kbnMtcXVlcnk` |
+|                  | DoT: `sdns://AwMAAAAAAAAADDE2Mi41NS41OC40MAAPY3RpZi5oYWdlemkub3Jn` |
+|                  | DoQ: `sdns://BAMAAAAAAAAADDE2Mi41NS41OC40MAAPY3RpZi5oYWdlemkub3Jn` |
 
 ### Latency
 
