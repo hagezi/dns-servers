@@ -39,7 +39,7 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 No additional censorship, only security and privacy-oriented filtering.
 
 > [!NOTE]
-> Alternatively, a DNS server is available that blocks only Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains.
+> Alternatively, a DNS server is available that uses the HaGeZi TIF and xRuffKez CTI threat intelligence feeds to block only Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains.
 
 #### Block TTL (Time to Live) and Response
 
