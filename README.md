@@ -60,7 +60,8 @@ No additional censorship, only security and privacy-oriented filtering.
   
 ### Hourly statistics
 
-A simplified version of the hourly statistics (number of queries, number of blocked queries, and number of clients) can be viewed via the following links: [root.hagezi.org](https://root.hagezi.org/stats.txt) | [wurzn.hagezi.org](https://wurzn.hagezi.org/stats.txt) | [juuri.hagezi.org](https://juuri.hagezi.org/stats.txt)
+A simplified version of the hourly statistics (number of queries, number of blocked queries, and number of clients) can be viewed via the following links: [root.hagezi.org](https://root.hagezi.org/stats.txt) | [wurzn.hagezi.org](https://wurzn.hagezi.org/stats.txt) | [juuri.hagezi.org](https://juuri.hagezi.org/stats.txt) | [ctif.hagezi.org](https://ctif.hagezi.org/stats.txt)
+
 
 ## Server Locations & Access
 
