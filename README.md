@@ -39,6 +39,9 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 
 No additional censorship, only security and privacy-oriented filtering.
 
+> [!IMPORTANT]
+> External lists are validated by my blocklist build system before deployment. Potential false positives, including popular domains and domains on the allowlist, are removed before the feeds are used by the DNS servers.
+
 > [!NOTE]
 > Alternatively, a DNS server is available that uses the HaGeZi TIF, xRuffKez CTI threat intelligence feed and PhishDestroy Real-Time-Feed to block only Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains.
 
