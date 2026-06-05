@@ -34,13 +34,8 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 |------|------|-------------|
 | HaGeZi Multi Pro | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/pro.txt) | Ads, Tracking, Analytics, Metrics, Telemetry |
 | HaGeZi TIF (Threat Intelligence Feeds) | [Link](https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/adblock/tif.txt) | Phishing, Malware, Scam, Fake, Cryptojacking |
-| xRuffKez CTI (Cyber Threat Intelligence)\* | [Link](https://codeberg.org/xRuffKez/tif/raw/branch/main/domains.txt) | Phishing, Malware, other dangerous harmful (live-updated) |
-| PhishDestroy Real-Time-Feed\* | [Link](https://raw.githubusercontent.com/phishdestroy/destroylist/main/list.txt) | Phishing and Scam (live-updated) |
 
 No additional censorship, only security and privacy-oriented filtering.
-
-> [!IMPORTANT]
-> \*: External lists are validated by my blocklist build system before deployment. Potential false positives, including popular domains and domains on the allowlist, are removed before the feeds are used by the DNS servers.
 
 > [!NOTE]
 > Alternatively, a DNS server is available that uses the HaGeZi TIF, xRuffKez CTI threat intelligence feed and PhishDestroy Real-Time-Feed to block only Phishing, Malware, Scam, Fake, Cryptojacking and other harmful domains.
