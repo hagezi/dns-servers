@@ -146,7 +146,6 @@ EU and neighboring countries with limited coverage from current server locations
 > OpenDNS              47ms      27ms      43ms      43ms      15ms      15ms      31ms      15ms      15ms      27ms      27.80
 > HaGeZi-Juuri         47ms      35ms      39ms      39ms      39ms      35ms      51ms      35ms      39ms      47ms      40.60
 > ```
-> <br><br>
 > [Latency cheat sheet](latency.pdf) - This PDF summarizes measured network latency in milliseconds from six European PoPs (Amsterdam, Falkenstein, Frankfurt, Helsinki, Nürnberg, Vienna) to cities across European countries, highlighting the fastest location per city and EU membership status based on WonderNetwork ping data.
 > <br><br>
 > **DNS resolution reference values (ms):**
