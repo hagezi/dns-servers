@@ -131,6 +131,22 @@ EU and neighboring countries with limited coverage from current server locations
 > <br><br>
 > To optimize latency when choosing DNS servers, you can personally measure the response times by pinging each DNS server from your own connection. This approach factors in your specific network conditions, such as geographic location, ISP routing, and local congestion, giving you a practical, real-world latency measurement. By selecting the DNS server with the lowest ping time, you maximize responsiveness and reduce DNS query delays for your devices or infrastructure.
 > <br><br>
+>Additionally, you can use the provided test script [dnsperftest.sh](dnsperftest.sh) to measure actual DNS resolution times for individual DNS servers. This method goes beyond simple ICMP latency by evaluating how quickly each server resolves domain queries in practice, offering a more accurate assessment of real-world DNS performance:
+> ```
+> ./dnsperftest.sh
+>                     Test1     Test2     Test3     Test4     Test5     Test6     Test7     Test8     Test9     Test10    Average
+> HaGeZi-Wurzn         15ms      11ms      15ms      11ms      15ms      11ms      15ms      11ms      11ms      15ms      13.00
+> Quad9                11ms      51ms      7ms       11ms      11ms      11ms      11ms      11ms      7ms       11ms      14.20
+> HaGeZi-CTIF          15ms      15ms      15ms      15ms      11ms      15ms      15ms      15ms      15ms      15ms      14.60
+> Google               11ms      19ms      35ms      15ms      11ms      11ms      15ms      11ms      11ms      11ms      15.00
+> HaGeZi-Root          19ms      15ms      15ms      27ms      15ms      19ms      15ms      15ms      15ms      11ms      16.60
+> Cloudflare           19ms      15ms      19ms      39ms      15ms      19ms      19ms      15ms      19ms      19ms      19.80
+> ControlD             15ms      19ms      15ms      19ms      39ms      19ms      31ms      19ms      19ms      15ms      21.00
+> AdGuard-DNS          19ms      19ms      19ms      19ms      27ms      19ms      39ms      15ms      19ms      19ms      21.40
+> OpenDNS              47ms      27ms      43ms      43ms      15ms      15ms      31ms      15ms      15ms      27ms      27.80
+> HaGeZi-Juuri         47ms      35ms      39ms      39ms      39ms      35ms      51ms      35ms      39ms      47ms      40.60
+> ```
+> <br><br>
 > [Latency cheat sheet](latency.pdf) - This PDF summarizes measured network latency in milliseconds from six European PoPs (Amsterdam, Falkenstein, Frankfurt, Helsinki, Nürnberg, Vienna) to cities across European countries, highlighting the fastest location per city and EU membership status based on WonderNetwork ping data.
 > <br><br>
 > **DNS resolution reference values (ms):**
