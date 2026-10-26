@@ -124,13 +124,13 @@ These servers block ads, tracking, analytics, metrics, and telemetry in addition
 
 | Location | Protocols | Endpoint/URL | Apple Config | Recommended for |
 |---|---|---|---|---|
-| Germany, Falkenstein | DoH/DoH3 | `https://root.hagezi.org/dns-query` | [Link](mobileconfig/root-hagezi-org.mobileconfig) · [QR](mobileconfig/root-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK |
+| Germany, Falkenstein | DoH/DoH3 | `https://root.hagezi.org/dns-query` | [Link](https://hagezi-mirror.dnsbunker.org/assets/dns-servers/mobileconfig/root-hagezi-org.mobileconfig) · [QR](mobileconfig/root-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, FR, GB, HU, IE, IT, LU, NL, PL, RO, SI, SK |
 | | DoT/DoQ | `root.hagezi.org` | | |
 | | Do53 | `188.34.161.210`<br>`2a01:4f8:c17:1c66::1` | | |
-| Germany, Nuremberg | DoH/DoH3 | `https://wurzn.hagezi.org/dns-query` | [Link](mobileconfig/wurzn-hagezi-org.mobileconfig) · [QR](mobileconfig/wurzn-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA |
+| Germany, Nuremberg | DoH/DoH3 | `https://wurzn.hagezi.org/dns-query` | [Link](https://hagezi-mirror.dnsbunker.org/assets/dns-servers/mobileconfig/wurzn-hagezi-org.mobileconfig) · [QR](mobileconfig/wurzn-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA |
 | | DoT/DoQ | `wurzn.hagezi.org` | | |
 | | Do53 | `159.69.155.94`<br>`2a01:4f8:1c1c:d363::1` | | |
-| Finland, Helsinki | DoH/DoH3 | `https://juuri.hagezi.org/dns-query` | [Link](mobileconfig/juuri-hagezi-org.mobileconfig) · [QR](mobileconfig/juuri-hagezi-org.mobileconfig.png) | DK, EE, FI, LT, LV, NO, SE |
+| Finland, Helsinki | DoH/DoH3 | `https://juuri.hagezi.org/dns-query` | [Link](https://hagezi-mirror.dnsbunker.org/assets/dns-servers/mobileconfig/juuri-hagezi-org.mobileconfig) · [QR](mobileconfig/juuri-hagezi-org.mobileconfig.png) | DK, EE, FI, LT, LV, NO, SE |
 | | DoT/DoQ | `juuri.hagezi.org` | | |
 | | Do53 | `95.217.163.17`<br>`2a01:4f9:c013:dc4e::1` | | |
 
@@ -140,7 +140,7 @@ This server blocks only phishing, malware, scam, fake, cryptojacking, and other 
 
 | Location | Protocols | Endpoint/URL | Apple Config | Recommended for |
 |---|---|---|---|---|
-| Germany, Nuremberg | DoH/DoH3 | `https://ctif.hagezi.org/dns-query` | [Link](mobileconfig/ctif-hagezi-org.mobileconfig) · [QR](mobileconfig/ctif-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA |
+| Germany, Nuremberg | DoH/DoH3 | `https://ctif.hagezi.org/dns-query` | [Link](https://hagezi-mirror.dnsbunker.org/assets/dns-servers/mobileconfig/ctif-hagezi-org.mobileconfig) · [QR](mobileconfig/ctif-hagezi-org.mobileconfig.png) | AT, BA, BE, BG, CH, CZ, DE, DK, ES, FR, GB, GR, HR, HU, IE, IT, LU, MD, MK, MT, NL, PL, PT, RO, RS, SI, SK, TR, UA |
 | | DoT/DoQ | `ctif.hagezi.org` | | |
 | | Do53 | `162.55.58.40`<br>`2a01:4f8:1c19:6c19::1` | | |
 
