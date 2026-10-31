@@ -50,10 +50,12 @@ Tests one resolver over one or more protocols. For the encrypted protocols, a si
 **Requirements:**
 
 ```sh
-pip install "dnspython>=2.8" "httpcore>=1.0.0" "httpx[http2]>=0.28.0" "h2>=4.2.0" "aioquic>=0.9"
+pip install --upgrade "dnspython[doh,doq]>=2.8"
 ```
 
-`aioquic` is only needed for DoQ and DoH3. If DoH fails with `'_HTTPTransport' object has no attribute '_pool'`, upgrade `h2` to 4.2.0 or later.
+The `doh` and `doq` extras pull in exactly the packages your dnspython version needs (httpx for 2.8, httpx2 for 2.9 and later), and the script works with both. `doq` (aioquic) is only needed for DoQ and DoH3; a protocol whose packages are missing is skipped with a hint instead of aborting the run.
+
+On Debian or Raspberry Pi OS, where a system-wide `pip install` is blocked, either use a venv or install for your user only with `pip install --user --break-system-packages ...`.
 
 **Example** (HaGeZi `root`, all protocols, 20 rounds, ranked recommendation):
 

@@ -45,11 +45,17 @@
 #   - DNS queries are sent as raw UDP packets (bypassing Resolve-DnsName)
 #     for accurate, low-overhead latency measurement. Every query uses a
 #     fixed transaction ID (0x1234); this is safe because queries run
-#     strictly sequentially on a single UDP socket per query, but the
-#     response is validated to actually start with that same transaction
-#     ID before its timing is accepted, to reject stray/malformed UDP
-#     packets. If this script were ever parallelized, transaction IDs
-#     would need to be randomized/unique per in-flight query.
+#     strictly sequentially on a single UDP socket per query. Before its
+#     timing is accepted, a reply must come from the queried server, carry
+#     that same transaction ID, have the QR (response) bit set and report
+#     RCODE NOERROR; anything else (stray packets, SERVFAIL, NXDOMAIN,
+#     REFUSED, ...) counts as "error", same as in dnsperftest.sh. If this
+#     script were ever parallelized, transaction IDs would need to be
+#     randomized/unique per in-flight query.
+#   - Latencies are printed with exactly two decimals and a '.' decimal
+#     separator regardless of the Windows locale, so table/CSV/TSV output
+#     matches dnsperftest.sh. In JSON, latencies and the average are
+#     numbers; only "error"/"timeout" are strings.
 #   - IPv6 support detection uses a connected UDP socket purely to force
 #     a local routing-table lookup (Connect() on a UDP socket does not
 #     put any packet on the wire) instead of sending a live DNS query to
@@ -160,7 +166,8 @@ Query order:
   slowest = highest average latency first
 
 Errors and timeouts:
-  If a server is unreachable, "error" is shown for that cell.
+  If a server is unreachable or answers with an error code (SERVFAIL,
+  NXDOMAIN, REFUSED, ...), "error" is shown for that cell.
   If a server exceeds the configured timeout, "timeout" is shown for
   that cell. If a provider has zero successful replies across all
   domains/passes, "error"/"timeout" is shown as its Average too.
@@ -175,8 +182,9 @@ Table format:
 
 Implementation note:
   DNS queries are sent as raw UDP packets (bypassing Resolve-DnsName) for
-  accurate, low-overhead latency measurement; the response's transaction
-  ID is validated before its timing is accepted.
+  accurate, low-overhead latency measurement. A reply only counts if it
+  comes from the queried server, matches the transaction ID and reports
+  RCODE NOERROR.
 
 Exit codes:
   0 = at least one provider answered successfully
@@ -314,9 +322,15 @@ function Test-DnsQuery {
         $response = $udpClient.Receive([ref]$remoteEndpoint)
         $sw.Stop()
 
-        $isValidResponse = $response.Length -ge 2 -and
+        # A usable reply must come from the queried server, carry our
+        # transaction ID, be a response (QR bit, byte 2) and report RCODE
+        # NOERROR (low 4 bits of byte 3). A full DNS header is 12 bytes.
+        $isValidResponse = $response.Length -ge 12 -and
+            $remoteEndpoint.Address.Equals($ipAddr) -and
             $response[0] -eq $DnsTransactionId[0] -and
-            $response[1] -eq $DnsTransactionId[1]
+            $response[1] -eq $DnsTransactionId[1] -and
+            ($response[2] -band 0x80) -ne 0 -and
+            ($response[3] -band 0x0F) -eq 0
 
         if ($isValidResponse) {
             return [PSCustomObject]@{ Status = 'ok'; Ms = $sw.Elapsed.TotalMilliseconds }
@@ -491,12 +505,23 @@ $sortedResults = if ($Sort -eq 'fastest') {
 # ---------------------------------------------------------------------------
 # Output helpers
 # ---------------------------------------------------------------------------
+# Formats a latency with exactly two decimals and a '.' decimal separator,
+# independent of the system locale (matches dnsperftest.sh, e.g. "12.50").
+# Non-numeric values ("error"/"timeout") are returned unchanged.
+function Format-Latency {
+    param($Value)
+    if ($Value -is [double] -or $Value -is [int]) {
+        return $Value.ToString('0.00', [System.Globalization.CultureInfo]::InvariantCulture)
+    }
+    return "$Value"
+}
+
 function Write-ColoredValue {
     param($Value, [string]$Unit = '')
 
     if ($Value -is [double] -or $Value -is [int]) {
         $color = Get-LatencyColor -Value $Value
-        Write-Host -NoNewline "$Value$Unit" -ForegroundColor $color
+        Write-Host -NoNewline "$(Format-Latency $Value)$Unit" -ForegroundColor $color
     } elseif ($Value -eq 'error' -or $Value -eq 'timeout') {
         Write-Host -NoNewline "$Value" -ForegroundColor Red
     } else {
@@ -506,7 +531,7 @@ function Write-ColoredValue {
 
 function Format-CellDisplay {
     param($Value)
-    if ($Value -is [double] -or $Value -is [int]) { return "${Value}ms" }
+    if ($Value -is [double] -or $Value -is [int]) { return "$(Format-Latency $Value)ms" }
     return "$Value"
 }
 
@@ -564,7 +589,8 @@ function Print-Csv {
     Write-Output $header
 
     foreach ($row in $sortedResults) {
-        $line = $row.Provider + "," + (($row.Tests) -join ",") + "," + $row.Average
+        $cells = @($row.Tests | ForEach-Object { Format-Latency $_ })
+        $line = $row.Provider + "," + ($cells -join ",") + "," + (Format-Latency $row.Average)
         Write-Output $line
     }
 }
@@ -576,7 +602,8 @@ function Print-Tsv {
     Write-Output $header
 
     foreach ($row in $sortedResults) {
-        $line = $row.Provider + "`t" + (($row.Tests) -join "`t") + "`t" + $row.Average
+        $cells = @($row.Tests | ForEach-Object { Format-Latency $_ })
+        $line = $row.Provider + "`t" + ($cells -join "`t") + "`t" + (Format-Latency $row.Average)
         Write-Output $line
     }
 }
@@ -590,7 +617,8 @@ function Print-Json {
         [PSCustomObject]@{
             provider = $row.Provider
             results  = [PSCustomObject]$resultsMap
-            average  = "$($row.Average)"
+            # Number when measured, "error"/"timeout" string otherwise.
+            average  = $row.Average
         }
     }
     $jsonObjects | ConvertTo-Json -Depth 4

@@ -16,8 +16,10 @@ on a dead TLS socket, this script includes a small, **silent** reconnect
 shim: if a DoT query fails with characteristic EOF/BAD_LENGTH TLS
 errors, the DoT socket is transparently rebuilt once and the query
 retried on the new connection **without extra logging during the
-rounds**. The number of such DoT reconnects is shown as a note under the
-end-of-run summary table.
+rounds**. The time spent on the failed attempt and on the new handshake
+is excluded from that query's measured latency, so a reconnect does not
+show up as an artificial latency spike. The number of such DoT
+reconnects is shown as a note under the end-of-run summary table.
 
 Results are printed as a table per round (or, with --quiet-rounds, as a
 single in-place progress line instead -- see QUIET ROUNDS below),
@@ -35,20 +37,27 @@ Domains to test can be given as positional arguments, read from a file
 --------------------------------------------------------------------------
 REQUIREMENTS
 --------------------------------------------------------------------------
-pip install "dnspython>=2.8" "httpcore>=1.0.0" "httpx[http2]>=0.28.0" \
-    "h2>=4.2.0" "aioquic>=0.9"
+pip install --upgrade "dnspython[doh,doq]>=2.8"
 
-- dnspython 2.8's DoH feature check requires h2>=4.2.0 (stricter than
-  httpx's own h2<5,>=3); an old OS-provided h2 (e.g. 4.1.0) can
-  silently disable DoH and cause AttributeError:
-  '_HTTPTransport' object has no attribute '_pool'.
-  Fix: pip install --upgrade "h2>=4.2.0"
-- aioquic: needed for --proto doq and doh3
+The "doh" and "doq" extras always pull in exactly the HTTP/QUIC packages
+the installed dnspython version expects, so there is nothing to pin by
+hand:
+- dnspython 2.8.x (Python 3.10+): httpx, httpcore, h2>=4.2.0
+- dnspython 2.9+  (Python 3.11+): httpx2, httpcore2, h2>=4.4
+  (httpx2 is the Pydantic-maintained continuation of httpx with the same
+  API). The script automatically uses whichever of the two libraries the
+  installed dnspython uses.
+
+- If DoH is reported as disabled, a package required by the "doh" extra
+  is missing or too old (typically an OS-provided h2). Fix: run the pip
+  command above again with --upgrade.
+- aioquic ("doq" extra): needed for --proto doq and doh3
+- A protocol whose connection cannot be set up (missing package, port
+  blocked, ...) is skipped with a message; the others are still tested.
 - do53/dot: no extra packages needed
 
 NOTE for Python < 3.10: dnspython >=2.8 requires Python 3.10+. Use:
-  pip install "dnspython>=2.7,<2.8" "httpcore>=1.0.0" \
-      "httpx[http2]>=0.26.0" "h2>=4.1.0" "aioquic>=1.0.0"
+  pip install "dnspython[doh,doq]>=2.7,<2.8"
 
 --------------------------------------------------------------------------
 PARAMETERS
@@ -77,7 +86,8 @@ PARAMETERS
                           (see below); without this flag, only the
                           per-protocol plain-language lines and the
                           rating criteria table are shown
---csv PATH                append results as CSV
+--csv PATH                write results as CSV (overwritten at the start
+                          of a run, then extended after every round)
 --json PATH               write results + summary as JSON
 --no-answer               hide the Answer column (table/CSV/JSON)
 --domains-file PATH       file with one domain per line
@@ -327,8 +337,11 @@ characteristic TLS EOF/BAD_LENGTH errors (e.g. because the resolver
 closed the long-lived session), the script transparently closes the old
 socket, rebuilds a fresh TLS connection (without printing anything to
 the console during the rounds), and retries the query once on that new
-socket before reporting an error. Only the INITIAL DoT connection setup
-before the first round is logged; reconnects during the loop are silent
+socket before reporting an error. If rebuilding the connection itself
+fails, the next DoT query first tries to reconnect again, instead of
+letting dnspython silently open a new, uncounted connection for every
+query. Only the INITIAL DoT connection setup before the first round is
+logged; reconnects during the loop are silent
 and only counted (see DOT_RECONNECTS and the note under the end-of-run
 summary table).
 
@@ -344,21 +357,30 @@ Do53 / DoH3 NOTES
 --------------------------------------------------------------------------
 Do53 (plain UDP/port 53) has no handshake/retry logic and is included
 purely as a plaintext baseline. DoH3 is implemented by dnspython on the
-same QUIC infrastructure as DoQ (dns.quic), not httpx (no native HTTP/3
+same QUIC infrastructure as DoQ (dns.quic), not httpx/httpx2 (no HTTP/3
 support): dns.query.https(..., http_version=dns.query.HTTPVersion.HTTP_3)
 with a persistent dns.quic.SyncQuicConnection (h3=True) as the session.
 
 --------------------------------------------------------------------------
 WHY THE WARM-UP QUERY EXISTS, AND TWO DoH-SPECIFIC FIXES BUILT IN
 --------------------------------------------------------------------------
-httpx (DoH) opens its TCP/TLS/HTTP2 connection lazily on the first real
+httpx/httpx2 (DoH) opens its TCP/TLS/HTTP2 connection lazily on the first real
 request; the warm-up query forces that before the measured rounds start.
 Two DoH-only fixes:
 1. TCP_NODELAY: dnspython's bootstrap_address network backend never
    disables Nagle's algorithm -- fixed via _NoDelayNetworkBackend.
-2. Idle keep-alive expiry: httpx.Client's default 5.0s keepalive_expiry
+2. Idle keep-alive expiry: the client's default 5.0s keepalive_expiry
    could silently close the DoH connection between rounds -- fixed via
-   httpx.Limits(keepalive_expiry=None).
+   Limits(keepalive_expiry=None), passed to the transport itself
+   (httpx/httpx2 ignore Client(limits=...) once a custom transport is set).
+
+--------------------------------------------------------------------------
+INTERRUPTING A RUN (Ctrl+C)
+--------------------------------------------------------------------------
+Ctrl+C during the rounds stops the loop cleanly: the round in progress is
+discarded, and the summary, rating, and (with --json) the final JSON file
+including "summary" are still produced from all completed rounds. Ctrl+C
+during connection setup aborts immediately.
 
 --------------------------------------------------------------------------
 EXAMPLES
@@ -384,7 +406,7 @@ python3 encdnsperftest.py --proto do53,dot,doh,doh3,doq --server 203.0.113.53 \
     --hostname resolver.example --loop --max-rounds 20 --json results.json \
     example.com google.com
 
-# Append every round's results to a CSV file as well
+# Also write every round's results to a CSV file
 python3 encdnsperftest.py --proto do53,doh --server 203.0.113.53 \
     --hostname resolver.example --loop --max-rounds 20 --csv results.csv \
     example.com google.com
@@ -435,6 +457,7 @@ from datetime import datetime, timezone
 import dns.message
 import dns.query
 import dns.rcode
+import dns.version
 
 DOT_RECONNECTS = 0
 
@@ -481,22 +504,31 @@ class _NoDelayNetworkBackend:
 
 
 def build_persistent_doh_session(server: str, hostname: str, verify: bool):
-    """Build an httpx.Client whose connections are forced to `server` (IP)
-    while TLS SNI/certificate checks use `hostname`, kept alive across
-    many dns.query.https() calls. Relies on dnspython's internal
-    dns.query._HTTPTransport; wraps its network backend with
-    _NoDelayNetworkBackend and disables httpx's idle keep-alive expiry."""
-    import httpx
+    """Build an HTTP client session whose connections are forced to
+    `server` (IP) while TLS SNI/certificate checks use `hostname`, kept
+    alive across many dns.query.https() calls. Relies on dnspython's
+    internal dns.query._HTTPTransport; wraps its network backend with
+    _NoDelayNetworkBackend and disables the idle keep-alive expiry.
 
-    transport = dns.query._HTTPTransport(  # noqa: SLF001 - intentional use of dnspython internal
-        http1=True, http2=True, verify=verify, bootstrap_address=server,
-    )
-    transport._pool._network_backend = _NoDelayNetworkBackend(  # noqa: SLF001
-        transport._pool._network_backend  # noqa: SLF001
-    )
+    dnspython 2.8 builds DoH on httpx, 2.9+ on httpx2 (same API). The
+    session must be an instance of the library dnspython itself uses, so
+    it is taken from dns.query rather than imported independently."""
+    httpx = getattr(dns.query, "httpx2", None) or getattr(dns.query, "httpx", None)
+    if httpx is None:
+        raise RuntimeError("dnspython provides no HTTP client library for DoH")
 
+    # httpx/httpx2 ignore Client(limits=...) when a custom transport is
+    # given, so the keep-alive setting has to be passed to the transport.
     limits = httpx.Limits(keepalive_expiry=None)
-    return httpx.Client(http1=True, http2=True, verify=verify, transport=transport, limits=limits)
+    transport = dns.query._HTTPTransport(  # noqa: SLF001 - intentional use of dnspython internal
+        http1=True, http2=True, verify=verify, bootstrap_address=server, limits=limits,
+    )
+    pool = transport._pool  # noqa: SLF001
+    pool._network_backend = _NoDelayNetworkBackend(pool._network_backend)  # noqa: SLF001
+    # Safety net in case a future dnspython stops forwarding limits=.
+    if hasattr(pool, "_keepalive_expiry"):
+        pool._keepalive_expiry = None  # noqa: SLF001
+    return httpx.Client(http1=True, http2=True, verify=verify, transport=transport)
 
 
 def print_table(rows, headers, group_col=None):
@@ -531,7 +563,7 @@ def compute_table_width(rows, headers):
     for row in rows:
         for i, cell in enumerate(row):
             widths[i] = max(widths[i], len(str(cell)))
-    return sum(widths) + 2 * (len(widths) - 1)
+    return sum(widths) + (len(widths) - 1)  # single-space separator, as in print_table
 
 
 def write_csv(path, rows, headers, append):
@@ -566,12 +598,22 @@ STATUS_COL = HEADERS_FULL.index("Status")
 PROTOCOL_COL = HEADERS_FULL.index("Protocol")
 
 
+def _take_overhead_ms(query_fn):
+    """Return and reset the time (ms) a query_fn spent on work that is not
+    part of the query itself (currently only DoT reconnects), so it can be
+    excluded from the measured latency."""
+    overhead = getattr(query_fn, "overhead_ms", 0.0)
+    if overhead:
+        query_fn.overhead_ms = 0.0
+    return overhead
+
+
 def query_and_collect(proto, name, rtype, query_fn):
     q = dns.message.make_query(name, rtype)
-    start = time.time()
+    start = time.perf_counter()
     try:
         resp = query_fn(q)
-        dt = (time.time() - start) * 1000
+        dt = (time.perf_counter() - start) * 1000 - _take_overhead_ms(query_fn)
 
         rcode = resp.rcode()
         if rcode != dns.rcode.NOERROR:
@@ -585,7 +627,7 @@ def query_and_collect(proto, name, rtype, query_fn):
         answers = ", ".join(str(r) for rrset in resp.answer for r in rrset)
         return [proto.upper(), name, rtype, f"{dt:.1f}", "OK", answers]
     except Exception as e:
-        dt = (time.time() - start) * 1000
+        dt = (time.perf_counter() - start) * 1000 - _take_overhead_ms(query_fn)
         return [proto.upper(), name, rtype, f"{dt:.1f}", "ERROR", str(e)]
 
 
@@ -594,9 +636,12 @@ def do_warmup(query_fn, domain, rtype, label):
     Raises on failure so setup_protocol can decide whether to retry."""
     print(f"{label} Sending warm-up query ({domain}) to force the connection open ...")
     q = dns.message.make_query(domain, rtype)
-    t0 = time.time()
-    query_fn(q)
-    print(f"{label} Warm-up done in {(time.time()-t0)*1000:.1f} ms "
+    t0 = time.perf_counter()
+    try:
+        query_fn(q)
+    finally:
+        _take_overhead_ms(query_fn)
+    print(f"{label} Warm-up done in {(time.perf_counter()-t0)*1000:.1f} ms "
           f"(connection is now warm and reused for all following queries)")
 
 
@@ -668,10 +713,10 @@ def setup_dot(args, stack):
     def make_sock(log: bool):
         if log:
             print(f"[DOT] Connecting to {args.server}:{port} (SNI={args.hostname}) ...")
-        t0 = time.time()
+        t0 = time.perf_counter()
         s = build_tls_socket(args.server, port, args.hostname, not args.no_verify)
         if log:
-            print(f"[DOT] TLS handshake completed in {time.time()-t0:.3f}s (cipher: {s.cipher()})")
+            print(f"[DOT] TLS handshake completed in {time.perf_counter()-t0:.3f}s (cipher: {s.cipher()})")
         return s
 
     # Initial connection: logged, exactly once, before the first round.
@@ -688,37 +733,56 @@ def setup_dot(args, stack):
 
     stack.callback(close_sock)
 
-    def query_fn(q):
+    def reconnect():
+        """Rebuild the TLS socket silently (counted, not logged)."""
         nonlocal sock
         global DOT_RECONNECTS
+        close_sock()
+        sock = make_sock(log=False)
+        DOT_RECONNECTS += 1
+
+    def query_fn(q):
+        t_start = time.perf_counter()
 
         def _do_query():
             return dns.query.tls(q, args.server, port=port, sock=sock, timeout=timeout)
+
+        if sock is None:
+            # A previous reconnect failed: try again first instead of letting
+            # dnspython silently open a new connection for every query.
+            reconnect()
+            query_fn.overhead_ms = (time.perf_counter() - t_start) * 1000
+            return _do_query()
 
         try:
             return _do_query()
         except Exception as e:
             msg = str(e)
-            if ("EOF" in msg or "connection has been closed" in msg
+            if not ("EOF" in msg or "connection has been closed" in msg
                     or "BAD_LENGTH" in msg):
-                # Silent reconnect during the loop: no console output,
-                # only counted via DOT_RECONNECTS (see end-of-run note).
-                close_sock()
-                try:
-                    sock = make_sock(log=False)
-                    DOT_RECONNECTS += 1
-                    return _do_query()
-                except Exception as e2:
-                    raise e2
-            raise
+                raise
+            # Silent reconnect during the loop: no console output, only
+            # counted via DOT_RECONNECTS (see end-of-run note). Time spent on
+            # the failed attempt and the new handshake is excluded from the
+            # measured latency via overhead_ms.
+            reconnect()
+            query_fn.overhead_ms = (time.perf_counter() - t_start) * 1000
+            return _do_query()
 
+    query_fn.overhead_ms = 0.0
     return query_fn
 
 
 def setup_doh(args, stack):
+    if not getattr(dns.query, "have_doh", True):
+        raise RuntimeError(
+            f"dnspython {dns.version.version} has DoH support disabled because a "
+            "package it requires for DoH is missing or too old (often an "
+            "OS-provided h2). "
+            'Fix: pip install --upgrade "dnspython[doh,doq]"')
     url = f"https://{args.hostname}{args.path}"
     timeout = args.timeout / 1000.0
-    print(f"[DOH] Creating persistent httpx.Client session, connecting to "
+    print(f"[DOH] Creating persistent HTTP/2 client session, connecting to "
           f"{args.server} (URL={url}) ...")
     session = build_persistent_doh_session(args.server, args.hostname, not args.no_verify)
     stack.callback(session.close)
@@ -737,12 +801,13 @@ def setup_doh3(args, stack):
     print(f"[DOH3] Establishing QUIC/HTTP-3 connection to {args.server}:{port} "
           f"(hostname={args.hostname}, URL={url}) ...")
     manager = dns.quic.SyncQuicManager(
-        verify_mode=not args.no_verify, server_name=args.hostname, h3=True
+        verify_mode=ssl.CERT_NONE if args.no_verify else ssl.CERT_REQUIRED,
+        server_name=args.hostname, h3=True
     )
     stack.enter_context(manager)
-    t0 = time.time()
+    t0 = time.perf_counter()
     connection = manager.connect(args.server, port)
-    print(f"[DOH3] Connection established in {time.time()-t0:.3f}s")
+    print(f"[DOH3] Connection established in {time.perf_counter()-t0:.3f}s")
 
     def query_fn(q):
         return dns.query.https(
@@ -762,12 +827,13 @@ def setup_doq(args, stack):
     print(f"[DOQ] Establishing QUIC connection to {args.server}:{port} "
           f"(hostname={args.hostname}) ...")
     manager = dns.quic.SyncQuicManager(
-        verify_mode=not args.no_verify, server_name=args.hostname
+        verify_mode=ssl.CERT_NONE if args.no_verify else ssl.CERT_REQUIRED,
+        server_name=args.hostname
     )
     stack.enter_context(manager)
-    t0 = time.time()
+    t0 = time.perf_counter()
     connection = manager.connect(args.server, port)
-    print(f"[DOQ] QUIC connection established in {time.time()-t0:.3f}s")
+    print(f"[DOQ] QUIC connection established in {time.perf_counter()-t0:.3f}s")
 
     def query_fn(q):
         return dns.query.quic(q, args.server, connection=connection, timeout=timeout)
@@ -1231,42 +1297,54 @@ def loop_runner(args, domains, protocols, query_fns):
         # setup/warm-up messages printed just before the loop starts.
         print()
 
-    while True:
-        if quiet_progress_active:
-            # Overwrite the same console line in place instead of
-            # printing a new line every round.
-            sys.stdout.write(f"\rRound ({round_no}/{total_rounds})")
-            sys.stdout.flush()
-        else:
-            print(f"\n-- Round {round_no} --\n")
+    interrupted = False
+    completed_rounds = 0
+    try:
+        while True:
+            if quiet_progress_active:
+                # Overwrite the same console line in place instead of
+                # printing a new line every round.
+                sys.stdout.write(f"\rRound ({round_no}/{total_rounds})")
+                sys.stdout.flush()
+            else:
+                print(f"\n-- Round {round_no} --\n")
 
-        rows = run_round(domains, protocols, query_fns, args.rtype,
-                          shuffle=args.shuffle, rng=rng)
-        all_rows.extend(rows)
-        display_rows = [row[:-1] for row in rows] if args.no_answer else rows
+            rows = run_round(domains, protocols, query_fns, args.rtype,
+                              shuffle=args.shuffle, rng=rng)
+            all_rows.extend(rows)
+            completed_rounds += 1
+            display_rows = [row[:-1] for row in rows] if args.no_answer else rows
 
-        if not quiet_progress_active:
-            print_table(display_rows, headers, group_col=DOMAIN_COL)
-
-        if args.csv:
-            write_csv(args.csv, display_rows, headers, append=(round_no > 1))
-        if args.json:
-            rounds_data.append({"round": round_no, "results": rows_to_dicts(display_rows, headers)})
-            write_json(args.json, meta, rounds_data)
-        if not args.loop:
-            break
-        if args.max_rounds and round_no >= args.max_rounds:
             if not quiet_progress_active:
-                print(f"\nReached --max-rounds {args.max_rounds}, stopping.")
-            break
-        round_no += 1
-        time.sleep(args.interval)
+                print_table(display_rows, headers, group_col=DOMAIN_COL)
+
+            if args.csv:
+                write_csv(args.csv, display_rows, headers, append=(round_no > 1))
+            if args.json:
+                rounds_data.append({"round": round_no, "results": rows_to_dicts(display_rows, headers)})
+                write_json(args.json, meta, rounds_data)
+            if not args.loop:
+                break
+            if args.max_rounds and round_no >= args.max_rounds:
+                if not quiet_progress_active:
+                    print(f"\nReached --max-rounds {args.max_rounds}, stopping.")
+                break
+            round_no += 1
+            time.sleep(args.interval)
+    except KeyboardInterrupt:
+        interrupted = True
 
     if quiet_progress_active:
         # End the in-place progress line with a newline so the summary
         # below starts cleanly on its own line.
         sys.stdout.write("\n")
         sys.stdout.flush()
+
+    if interrupted:
+        print(f"\nInterrupted by user after {completed_rounds} completed round(s).")
+        if completed_rounds == 0:
+            print("No round was completed, so there is nothing to summarize.")
+            return
 
     stats = compute_protocol_stats(all_rows, protocols)
     table_width = print_summary(stats)
@@ -1283,9 +1361,17 @@ def run(args):
     with ExitStack() as stack:
         query_fns = {}
         for proto in protocols:
-            query_fns[proto] = setup_protocol(proto, args, stack, domains[0])
+            try:
+                query_fns[proto] = setup_protocol(proto, args, stack, domains[0])
+            except Exception as e:
+                # Do not abort the whole run because one protocol cannot be
+                # set up (missing package, port blocked, ...): skip it.
+                print(f"[{proto.upper()}] Skipping this protocol: {e}")
 
-        loop_runner(args, domains, protocols, query_fns)
+        active = [p for p in protocols if p in query_fns]
+        if not active:
+            sys.exit("No protocol could be set up, nothing to test.")
+        loop_runner(args, domains, active, query_fns)
 
 
 def parse_protocols(value):
@@ -1340,7 +1426,7 @@ def main():
                    help="Show the ranked protocol recommendation section at the end "
                         "(opt-in; without this flag, only the always-shown per-protocol "
                         "plain-language lines and rating criteria table are printed)")
-    p.add_argument("--csv", help="Optional path to append results as CSV")
+    p.add_argument("--csv", help="Optional path to write results as CSV (overwritten at the start of a run, then extended after every round)")
     p.add_argument("--json", help="Optional path to write results and summary as JSON")
     p.add_argument("--no-answer", action="store_true",
                    help="Suppress the Answer column in table/CSV/JSON output")

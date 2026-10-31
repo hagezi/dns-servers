@@ -49,6 +49,15 @@
 #     startup and the script aborts with an error if violated.
 #   - --timeout only supports whole seconds (this is a limitation of
 #     dig's +time option and the POSIX "timeout" command used here).
+#   - A reply only counts as successful if it reports RCODE NOERROR;
+#     SERVFAIL, NXDOMAIN, REFUSED etc. are counted as "error".
+#   - Timeouts: dig gets +time=SEC and runs under an outer "timeout" one
+#     second longer, so dig's own timeout normally fires first. Both dig's
+#     "no reply" exit code (9) and the outer timeout (124) are reported as
+#     "timeout". drill has no per-query timeout option and runs under the
+#     outer "timeout" alone.
+#   - dig/drill report the query time in whole milliseconds, so results
+#     have 1 ms resolution (dnsperftest.ps1 measures sub-millisecond).
 #   - IPv6 support detection uses a local routing-table lookup (see
 #     detect_ipv6_support) rather than a live query against one specific
 #     external resolver. This is fast and does not depend on any single
@@ -71,7 +80,8 @@
 #     as an octal number.
 #
 # DEPENDENCIES
-#   - dig (package: dnsutils / bind-tools) or drill (package: ldns-utils)
+#   - dig (preferred; package: dnsutils / bind-tools) or, as a fallback,
+#     drill (package: ldns-utils)
 #   - awk, timeout, sort  (all part of coreutils / busybox on most systems)
 #   No dependency on bc is required.
 #
@@ -86,10 +96,10 @@ export LC_ALL=C
 # ---------------------------------------------------------------------------
 # Dependency detection
 # ---------------------------------------------------------------------------
-if command -v drill >/dev/null 2>&1; then
-    dig_cmd="drill"
-elif command -v dig >/dev/null 2>&1; then
+if command -v dig >/dev/null 2>&1; then
     dig_cmd="dig"
+elif command -v drill >/dev/null 2>&1; then
+    dig_cmd="drill"
 else
     echo "error: neither 'dig' nor 'drill' was found. Please install dnsutils (dig) or ldns-utils (drill)." >&2
     exit 1
@@ -155,7 +165,8 @@ Query order:
   slowest = highest average latency first
 
 Errors and timeouts:
-  If a server is unreachable, "error" is shown for that cell.
+  If a server is unreachable or answers with an error code (SERVFAIL,
+  NXDOMAIN, REFUSED, ...), "error" is shown for that cell.
   If a server exceeds the configured timeout, "timeout" is shown for
   that cell. If a provider has zero successful replies across all
   domains/passes, "error"/"timeout" is shown as its Average too.
@@ -421,6 +432,32 @@ provider_colwidth=$((provider_maxlen + 2))
 #   Results are accumulated in associative arrays keyed by "provider|domain"
 #   so that grouping/printing per provider afterwards is a simple lookup.
 # ---------------------------------------------------------------------------
+# run_query IP DOMAIN: one A query with a hard per-query timeout. dig gets
+# its own +time limit, and the outer "timeout" is one second longer so that
+# dig's own timeout normally wins and is reported cleanly (exit code 9).
+# drill has no per-query timeout option, so the outer "timeout" is its only
+# limit. dig-only options are never passed to drill.
+run_query() {
+    local ip="$1" domain="$2"
+    if [ "$dig_cmd" = "dig" ]; then
+        timeout "$((TIMEOUT_SEC + 1))s" dig +tries=1 +time="$TIMEOUT_SEC" +stats @"$ip" "$domain" A 2>&1
+    else
+        timeout "${TIMEOUT_SEC}s" drill @"$ip" "$domain" A 2>&1
+    fi
+}
+
+# is_timeout RC OUTPUT: true if the query ran into a timeout rather than
+# failing in some other way (124 = killed by "timeout", 9 = dig "no reply
+# from server").
+is_timeout() {
+    [ "$1" -eq 124 ] && return 0
+    [ "$dig_cmd" = "dig" ] && [ "$1" -eq 9 ] && return 0
+    case "$2" in
+        *"timed out"*) return 0 ;;
+    esac
+    return 1
+}
+
 declare -A sum_time      # accumulated successful query time per "provider|domain"
 declare -A count_success # number of successful queries per "provider|domain"
 declare -A count_timeout # number of timeouts per "provider|domain"
@@ -438,16 +475,19 @@ for (( pass=1; pass<=REPEAT_COUNT; pass++ )); do
                 "$query_num" "$totalqueries" "$pass" "$REPEAT_COUNT" "$d" "$pname" >&2
 
             set +e
-            output=$(timeout "${TIMEOUT_SEC}s" "$dig_cmd" +tries=1 +time="$TIMEOUT_SEC" +stats @"$pip" "$d" 2>&1)
+            output=$(run_query "$pip" "$d")
             rc=$?
             set -e
 
+            # Query time and RCODE ("status:" in dig, "rcode:" in drill).
             ttime=$(printf '%s' "$output" | awk '/Query time:/ {print $4; exit}')
+            rcode=$(printf '%s' "$output" | awk 'match($0, /(status|rcode): [A-Z]+/) {
+                s = substr($0, RSTART, RLENGTH); sub(/.*: /, "", s); print s; exit }')
 
-            if [ "$rc" -eq 124 ]; then
+            if is_timeout "$rc" "$output"; then
                 count_timeout["$key"]=$(( ${count_timeout["$key"]:-0} + 1 ))
-            elif [ -z "${ttime:-}" ]; then
-                : # neither a successful reply nor a timeout -> counts as plain error
+            elif [ -z "${ttime:-}" ] || [ "${rcode:-}" != "NOERROR" ]; then
+                : # no usable reply, or an error RCODE (SERVFAIL, NXDOMAIN, ...) -> plain error
             else
                 sum_time["$key"]=$(( ${sum_time["$key"]:-0} + ttime ))
                 count_success["$key"]=$(( ${count_success["$key"]:-0} + 1 ))
