@@ -72,6 +72,7 @@ HaGeZi DNS employs a balanced blocking strategy to deliver robust privacy and se
 |---|---|---|
 | HaGeZi Multi Pro | [Link](https://hagezi-mirror.dnsbunker.org/adblock/pro.txt) | Ads, tracking, analytics, metrics, telemetry |
 | HaGeZi TIF (Threat Intelligence Feeds) | [Link](https://hagezi-mirror.dnsbunker.org/adblock/tif.txt) | Phishing, malware, scam, fake, cryptojacking |
+| xRuffKez CTI (Cyber Threat Intelligence) | [Link](https://raw.githubusercontent.com/DNSBunker/CTI/refs/heads/main/domains.txt) | Phishing, malware, scam, fraud |
 
 Blocklists are regenerated every 4 hours and updated on the servers immediately afterward.
 
@@ -79,7 +80,7 @@ Blocklists are regenerated every 4 hours and updated on the servers immediately 
 > No intentional censorship beyond privacy, ad, and security filtering. If a domain seems to be blocked incorrectly, or you believe a domain should be blocked, submit a report via the [blocklist repository's issue tracker](https://github.com/hagezi/dns-blocklists/issues) or contact [support@hagezi.org](mailto:support@hagezi.org). You can also use the official public [Matrix support chat](https://matrix.to/#/#hagezi-support:tchncs.de?via=tchncs.de). See [PRIVACY](PRIVACY.md) for the full content-moderation and DSA compliance disclosure.
 
 > [!NOTE]
-> A separate DNS server is available that uses only the HaGeZi TIF list, blocking exclusively phishing, malware, scam, fake, cryptojacking, and other harmful domains.
+> A separate DNS server is available that uses the HaGeZi TIF and the xRuffKez CTI list, blocking exclusively phishing, malware, scam, fake, cryptojacking, and other harmful domains.
 
 #### Block TTL and Response <a id="block-ttl"></a>
 
