@@ -1,7 +1,24 @@
 #Requires -Version 5.1
+# SPDX-License-Identifier: GPL-3.0-only
 #
 # dnsperftest.ps1 - DNS resolver latency benchmark (PowerShell port)
 # ====================================================================
+#
+# Based on dnsperftest by CleanBrowsing (https://github.com/cleanbrowsing/dnsperftest)
+# Copyright (C) 2018 - 2022 CleanBrowsing Inc.
+# Copyright (C) 2026 HaGeZi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 # PURPOSE
 #   Measures DNS query latency of a configurable list of DNS resolvers
@@ -85,6 +102,15 @@
 #   0 = at least one provider answered successfully
 #   1 = invalid usage / missing dependency
 #   2 = all tested providers failed (error or timeout)
+#
+# RUNNING THE SCRIPT
+#   Windows blocks downloaded scripts that are not signed. Remove the
+#   download mark once with:
+#     Unblock-File .\dnsperftest.ps1
+#   If running scripts is disabled entirely, allow them for your user:
+#     Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+#   or run it a single time without the policy check:
+#     powershell -ExecutionPolicy Bypass -File .\dnsperftest.ps1
 
 [CmdletBinding()]
 param(
@@ -114,10 +140,13 @@ $ErrorActionPreference = 'Stop'
 # Per-query timeout in milliseconds, derived from -Timeout (seconds).
 $TimeoutMs = $Timeout * 1000
 
-# Latency color thresholds in ms (configurable)
-$ThresholdGreen  = 25
+# Latency color thresholds in ms (configurable). A value below a threshold
+# gets that color; the defaults follow the rating scale in the HaGeZi DNS
+# README (< 20 excellent, < 50 very good, < 100 OK, < 200 average/slow).
+$ThresholdGreen  = 20
 $ThresholdYellow = 50
 $ThresholdOrange = 100
+$ThresholdRed    = 200
 
 # Writes an error message to stderr without triggering PowerShell's
 # terminating-error behavior (see IMPLEMENTATION NOTES above), so the
@@ -173,8 +202,10 @@ Errors and timeouts:
   domains/passes, "error"/"timeout" is shown as its Average too.
 
 Table format:
-  Latencies (including Average) are color-coded (green/yellow/orange/red)
-  based on ThresholdGreen / ThresholdYellow / ThresholdOrange (ms).
+  Latencies (including Average) are color-coded using the same rating
+  scale as the HaGeZi DNS README: green < 20 ms (excellent), yellow
+  < 50 ms (very good), orange < 100 ms (OK), red < 200 ms (average to
+  slow), dark red >= 200 ms (very slow).
   "error"/"timeout" are highlighted in red. Column widths adapt to the
   actual rendered content; domain headers show a shortened label (TLD
   stripped) so columns stay compact. CSV/TSV/JSON always use full domain
@@ -190,6 +221,16 @@ Exit codes:
   0 = at least one provider answered successfully
   1 = invalid usage / missing dependency
   2 = all tested providers failed (error or timeout)
+
+Running the script:
+  Windows blocks downloaded scripts that are not signed ("not digitally
+  signed" error). Remove the download mark once with:
+    Unblock-File .\dnsperftest.ps1
+  If the error says that running scripts is disabled on this system,
+  allow scripts for your user once:
+    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+  or run it a single time without the policy check:
+    powershell -ExecutionPolicy Bypass -File .\dnsperftest.ps1
 "@ | Write-Output
 }
 
@@ -352,10 +393,11 @@ function Test-DnsQuery {
 
 function Get-LatencyColor {
     param([double]$Value)
-    if ($Value -le $ThresholdGreen)  { return 'Green' }
-    if ($Value -le $ThresholdYellow) { return 'Yellow' }
-    if ($Value -le $ThresholdOrange) { return 'DarkYellow' }
-    return 'Red'
+    if ($Value -lt $ThresholdGreen)  { return 'Green' }
+    if ($Value -lt $ThresholdYellow) { return 'Yellow' }
+    if ($Value -lt $ThresholdOrange) { return 'DarkYellow' }
+    if ($Value -lt $ThresholdRed)    { return 'Red' }
+    return 'DarkRed'
 }
 
 # ---------------------------------------------------------------------------

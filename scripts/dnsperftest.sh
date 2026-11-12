@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 #
 # dnsperftest.sh - DNS resolver latency benchmark
 # =================================================
+#
+# Based on dnsperftest by CleanBrowsing (https://github.com/cleanbrowsing/dnsperftest)
+# Copyright (C) 2018 - 2022 CleanBrowsing Inc.
+# Copyright (C) 2026 HaGeZi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 # PURPOSE
 #   Measures DNS query latency of a configurable list of DNS resolvers
@@ -111,16 +128,20 @@ fi
 TIMEOUT_SEC=1
 REPEAT_COUNT=1
 
-# Latency color thresholds in ms (configurable)
-THRESHOLD_GREEN=25
+# Latency color thresholds in ms (configurable). A value below a threshold
+# gets that color; the defaults follow the rating scale in the HaGeZi DNS
+# README (< 20 excellent, < 50 very good, < 100 OK, < 200 average/slow).
+THRESHOLD_GREEN=20
 THRESHOLD_YELLOW=50
 THRESHOLD_ORANGE=100
+THRESHOLD_RED=200
 
 # ANSI color codes
 COLOR_GREEN='\033[0;32m'
 COLOR_YELLOW='\033[0;33m'
 COLOR_ORANGE='\033[0;38;5;208m'
 COLOR_RED='\033[0;31m'
+COLOR_DARKRED='\033[1;31m'   # bold red: very slow (>= THRESHOLD_RED)
 COLOR_RESET='\033[0m'
 
 # ---------------------------------------------------------------------------
@@ -172,8 +193,10 @@ Errors and timeouts:
   domains/passes, "error"/"timeout" is shown as its Average too.
 
 Table format:
-  Latencies (including Average) are color-coded (green/yellow/orange/red)
-  based on THRESHOLD_GREEN / THRESHOLD_YELLOW / THRESHOLD_ORANGE (ms).
+  Latencies (including Average) are color-coded using the same rating
+  scale as the HaGeZi DNS README: green < 20 ms (excellent), yellow
+  < 50 ms (very good), orange < 100 ms (OK), red < 200 ms (average to
+  slow), bold/dark red >= 200 ms (very slow).
   "error"/"timeout" are highlighted in red. Column widths adapt to the
   actual rendered content; domain headers show a shortened label (TLD
   stripped) so columns stay compact. CSV/TSV/JSON always use full domain
@@ -584,15 +607,18 @@ colorize_value() {
         local g=$((THRESHOLD_GREEN * 100))
         local y=$((THRESHOLD_YELLOW * 100))
         local o=$((THRESHOLD_ORANGE * 100))
+        local r=$((THRESHOLD_RED * 100))
         local color
-        if (( scaled <= g )); then
+        if (( scaled < g )); then
             color="$COLOR_GREEN"
-        elif (( scaled <= y )); then
+        elif (( scaled < y )); then
             color="$COLOR_YELLOW"
-        elif (( scaled <= o )); then
+        elif (( scaled < o )); then
             color="$COLOR_ORANGE"
-        else
+        elif (( scaled < r )); then
             color="$COLOR_RED"
+        else
+            color="$COLOR_DARKRED"
         fi
         printf '%b%s%s%b' "$color" "$val" "$unit" "$COLOR_RESET"
     elif [ "$val" = "error" ] || [ "$val" = "timeout" ]; then

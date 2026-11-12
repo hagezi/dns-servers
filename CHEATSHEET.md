@@ -94,6 +94,8 @@ If your router or firmware supports encrypted DNS, use the DoH URL or DoT hostna
 
 Run a [DNS leak test](https://dnscheck.tools). If it shows an IP address other than the ones above, your device or network is bypassing this DNS setup.
 
+To check whether every server and protocol works from your network, run the test script [hagezi-dns-check.sh](scripts/hagezi-dns-check.sh) (Linux, macOS) or [hagezi-dns-check.ps1](scripts/hagezi-dns-check.ps1) (Windows). It tests Do53, DoT, DoH, and DoQ on IPv4 and IPv6, including DNSSEC validation and blocking, and shows which server answers fastest. It queries the servers directly, so it complements the leak test rather than replacing it: the leak test shows which resolver your device actually uses. Usage: [scripts/README](scripts/README.md).
+
 ## 6. Something not working? <a id="troubleshooting"></a>
 
 **One site fails, everything else is fine.** This is almost always a blocked domain rather than a fault. Blocked domains are answered with `0.0.0.0`, so the connection fails instantly and the browser shows a generic "can't reach this site" page that says nothing about DNS or blocking. To confirm, look the domain up through a different resolver, or switch to `ctif.hagezi.org` for a moment: if the site loads there, an ad or tracker rule was the cause, since that server filters threats only. Report anything blocked in error via the channels in [Good to know](#things-to-know).
@@ -107,7 +109,9 @@ Run a [DNS leak test](https://dnscheck.tools). If it shows an IP address other t
 
 To get an incorrect block lifted, contact the operator privately: [support@hagezi.org](mailto:support@hagezi.org), [Matrix](https://matrix.to/#/@hagezi:tchncs.de), or [Signal](https://signal.me/#eu/WlBfKuiT1S1GAGwDRpvIJErjM-C3IcjQUQ9HWLzeJKGKTfwlOGhEe7GQRSx05uX0). Please don't use the public support chat for this, since sorting it out means sharing your IP address with whoever is in the room.
 
-**Still stuck?** If the server looks healthy and none of the above applies, reach out via [support@hagezi.org](mailto:support@hagezi.org) or the [Matrix chat](https://matrix.to/#/#hagezi-support:tchncs.de?via=tchncs.de).
+**Only one protocol or IP version fails.** For example, DoT works but DoH does not, or only IPv6 is affected. Run [hagezi-dns-check](#verify): it tests every server, protocol, and IP version separately and shows exactly which combination fails. It connects to the servers by IP address, so it also works while name resolution on your device is broken. A failing DoQ alone usually means your network blocks UDP port 853.
+
+**Still stuck?** If the server looks healthy and none of the above applies, reach out via [support@hagezi.org](mailto:support@hagezi.org) or the [Matrix chat](https://matrix.to/#/#hagezi-support:tchncs.de?via=tchncs.de). Including the output of [hagezi-dns-check](#verify) speeds things up considerably. It lists only the servers' addresses and the test results, not your own IP address.
 
 ## 7. Good to know <a id="things-to-know"></a>
 

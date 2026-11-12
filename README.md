@@ -30,6 +30,7 @@ HaGeZi DNS offers free, non-commercial public DNS resolvers designed and operate
     - [Threat-Only Servers](#dns-stamps-threat)
   - [Latency](#latency)
   - [Expected IP Addresses](#ip-addresses)
+- [Test Scripts](#test-scripts)
 - [Web-Based DNS Testing Services](#testing-services)
 - [Getting Help](#help)
 - [Glossary](#glossary)
@@ -185,10 +186,7 @@ Example WonderNetwork compilation configured for Germany:
 
 To optimize latency, personally measure the response times by pinging each DNS server from your own connection. This factors in your specific network conditions, such as geographic location, ISP routing, and local congestion, giving you a practical, real-world latency measurement. Selecting the server with the lowest ping time maximizes responsiveness and reduces DNS query delays.
 
-Use the provided test scripts to measure actual DNS resolution times (beyond simple ICMP latency), evaluating how quickly each server resolves domain queries in practice:
-
-- [dnsperftest.sh](scripts/dnsperftest.sh) (Unix/Linux shell script)
-- [dnsperftest.ps1](scripts/dnsperftest.ps1) (PowerShell script)
+To measure actual DNS resolution times (beyond simple ICMP latency) from your own connection, use the [test scripts](#test-scripts), for example `dnsperftest.sh`:
 
 ```
 ./dnsperftest.sh
@@ -217,6 +215,19 @@ Use the provided test scripts to measure actual DNS resolution times (beyond sim
 - `162.55.58.40` / `2a01:4f8:1c19:6c19::1` (PTR: `ctif.hagezi.org`), Hetzner Online GmbH, Nürnberg, Bavaria, DE
 
 If a [DNS leak test](https://dnscheck.tools) shows IP addresses other than these, your device or network might be leaking DNS queries through fallback resolvers or directly to your ISP. This means requests are bypassing your intended DNS protection and potentially exposing your browsing activity.
+
+## Test Scripts <a id="test-scripts"></a>
+
+Command-line scripts to check HaGeZi DNS from your own connection. Usage, options, and requirements: [scripts/README](scripts/README.md).
+
+| Script | Platform | What it does |
+|---|---|---|
+| [hagezi-dns-check.sh](scripts/hagezi-dns-check.sh) · [.ps1](scripts/hagezi-dns-check.ps1) | Linux/macOS · Windows | Tests all servers over Do53, DoT, DoH, and DoQ (IPv4/IPv6): resolution, DNSSEC validation, blocking, and ping latency |
+| [dnsperftest.sh](scripts/dnsperftest.sh) · [.ps1](scripts/dnsperftest.ps1) | Linux/macOS · Windows | Compares Do53 resolution times of HaGeZi DNS and other public resolvers |
+| [encdnsperftest.py](scripts/encdnsperftest.py) | Any OS (Python) | Measures one server over Do53, DoT, DoH, DoH3, and DoQ with persistent connections, like a real client |
+
+> [!TIP]
+> If something does not work, run `hagezi-dns-check` first and include its output when you [ask for help](#help).
 
 ## Web-Based DNS Testing Services <a id="testing-services"></a>
 
